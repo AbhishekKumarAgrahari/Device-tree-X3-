@@ -1,222 +1,8 @@
-PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
-
-$(call inherit-product, vendor/aosp/config/bootanimation.mk)
-
-# Backup Tool
-PRODUCT_COPY_FILES += \
-    vendor/aosp/prebuilt/common/bin/backuptool.sh:install/bin/backuptool.sh \
-    vendor/aosp/prebuilt/common/bin/backuptool.functions:install/bin/backuptool.functions \
-    vendor/aosp/prebuilt/common/bin/blacklist:system/addon.d/blacklist \
-    vendor/aosp/prebuilt/common/bin/whitelist:system/addon.d/whitelist \
-    
-# Include LatinIME dictionaries
-PRODUCT_PACKAGE_OVERLAYS += vendor/aosp/overlay/dictionaries
-
-# init.d support
-PRODUCT_COPY_FILES += \
-    vendor/aosp/prebuilt/common/bin/sysinit:system/bin/sysinit \
-    vendor/aosp/prebuilt/common/etc/init.d/00banner:system/etc/init.d/00banner \
-    vendor/aosp/prebuilt/common/etc/init.d/90userinit:system/etc/init.d/90userinit
-
-# Init file
-PRODUCT_COPY_FILES += \
-    vendor/aosp/prebuilt/common/etc/init.local.rc:root/init.aosp.rc
-
-# Bring in camera effects
-PRODUCT_COPY_FILES +=  \
-    vendor/aosp/prebuilt/common/media/LMprec_508.emd:system/media/LMprec_508.emd \
-    vendor/aosp/prebuilt/common/media/PFFprec_600.emd:system/media/PFFprec_600.emd
-
-ifeq ($(DEFAULT_ROOT_METHOD),magisk)
-# Copy Magisk zip
-PRODUCT_COPY_FILES += \
-    vendor/aosp/prebuilt/zip/magisk.zip:system/addon.d/magisk.zip
-
-else ifeq ($(DEFAULT_ROOT_METHOD),supersu)
-# SuperSU
-ifeq ($(BOARD_VENDOR),sony)
-PRODUCT_COPY_FILES += \
-    vendor/aosp/prebuilt/common/etc/UPDATE-SuperSU-2.52.zip:system/addon.d/UPDATE-SuperSU.zip \
-    vendor/aosp/prebuilt/common/etc/init.d/99SuperSUDaemon:system/etc/init.d/99SuperSUDaemon
-else
-PRODUCT_COPY_FILES += \
-   vendor/aosp/prebuilt/common/etc/UPDATE-SuperSU.zip:system/addon.d/UPDATE-SuperSU.zip \
-   vendor/aosp/prebuilt/common/etc/init.d/99SuperSUDaemon:system/etc/init.d/99SuperSUDaemon
-endif
-endif
-
-
-# Enable SIP+VoIP on all targets
-PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml
-
-# Enable wireless Xbox 360 controller support
-PRODUCT_COPY_FILES += \
-    frameworks/base/data/keyboards/Vendor_045e_Product_028e.kl:system/usr/keylayout/Vendor_045e_Product_0719.kl
-
-# Misc packages
-PRODUCT_PACKAGES += \
-    BluetoothExt \
-    MusicFX \
-    LatinIME \
-    libemoji \
-    libsepol \
-    e2fsck \
-    mke2fs \
-    tune2fs \
-    bash \
-    powertop \
-    mount.exfat \
-    fsck.exfat \
-    mkfs.exfat \
-    mkfs.f2fs \
-    fsck.f2fs \
-    fibmap.f2fs \
-    mkfs.ntfs \
-    fsck.ntfs \
-    mount.ntfs \
-    gdbserver \
-    micro_bench \
-    oprofiled \
-    sqlite3 \
-    strace \
-    ThemeInterfacer \
-    Terminal \
-    Launcher3 \
-    WallpaperPickerGoogle \
-    ViaBrowser \
-    AEXPapers \
-    OmniStyle \
-    CalendarWidget \
-    Turbo
-
-# Include explicitly to work around Facelock issues
-PRODUCT_PACKAGES += \
-    libprotobuf-cpp-full
-
-# Custom off-mode charger
-ifneq ($(WITH_CM_CHARGER),false)
-PRODUCT_PACKAGES += \
-    charger_res_images \
-    cm_charger_res_images \
-    font_log.png \
-    libhealthd.cm
-endif
-
-# DU Utils Library
-PRODUCT_PACKAGES += \
-    org.dirtyunicorns.utils
-
-# Stagefright FFMPEG plugin
-PRODUCT_PACKAGES += \
-    libffmpeg_extractor \
-    libffmpeg_omx \
-    media_codecs_ffmpeg.xml
-
-# DU Utils Library
-PRODUCT_BOOT_JARS += \
-    org.dirtyunicorns.utils
-
-# Telephony packages
-PRODUCT_PACKAGES += \
-    CellBroadcastReceiver \
-    Stk
-
-# Include librsjni explicitly to workaround GMS issue
-PRODUCT_PACKAGES += \
-    librsjni
-
-# Telephony
-PRODUCT_PACKAGES += \
-    telephony-ext
-
-PRODUCT_BOOT_JARS += \
-    telephony-ext
-
-# TCM (TCP Connection Management)
-PRODUCT_PACKAGES += \
-    tcmiface
-
-PRODUCT_BOOT_JARS += \
-    tcmiface
-
-# include definitions for SDCLANG
- include vendor/aosp/sdclang/sdclang.mk
-
-# Mms depends on SoundRecorder for recorded audio messages
-PRODUCT_PACKAGES += \
-    SoundRecorder
-
-# Sensitive Phone Numbers list
-PRODUCT_COPY_FILES += \
-    vendor/aosp/prebuilt/common/etc/sensitive_pn.xml:system/etc/sensitive_pn.xml
-
-# World APN list
-PRODUCT_COPY_FILES += \
-    vendor/aosp/prebuilt/common/etc/apns-conf.xml:system/etc/apns-conf.xml
-
-# Selective SPN list for operator number who has the problem.
-PRODUCT_COPY_FILES += \
-    vendor/aosp/prebuilt/common/etc/selective-spn-conf.xml:system/etc/selective-spn-conf.xml
-
-# Overlays & Include LatinIME dictionaries
-PRODUCT_PACKAGE_OVERLAYS += \
-	vendor/aosp/overlay/common \
-	vendor/aosp/overlay/dictionaries
-
-# Proprietary latinime libs needed for Keyboard swyping
-ifneq ($(filter arm64,$(TARGET_ARCH)),)
-PRODUCT_COPY_FILES += \
-    vendor/aosp/prebuilt/common/lib/libjni_latinimegoogle.so:system/lib/libjni_latinimegoogle.so \
-    vendor/aosp/prebuilt/common/lib/libjni_latinime.so:system/lib/libjni_latinime.so
-else
-PRODUCT_COPY_FILES += \
-    vendor/aosp/prebuilt/common/lib64/libjni_latinimegoogle.so:system/lib64/libjni_latinimegoogle.so \
-    vendor/aosp/prebuilt/common/lib64/libjni_latinime.so:system/lib64/libjni_latinime.so
-endif
-
-$(call inherit-product-if-exists, vendor/extra/product.mk)
-
-PRODUCT_PACKAGES += \
-	messaging \
-	LiveWallpapers \
-	LiveWallpapersPicker \
-        Phonograph \
-	OmniJaws
-    
-    
 # Inherit device configuration
 $(call inherit-product, $(LOCAL_PATH)/device.mk)
 
 # Inherit some common CM stuff.
-$(call inherit-product, vendor/aosp/config/aex_props.mk)
-
-#Extended Versioning
-EXTENDED_VERSION = v4.5
-
-ifndef EXTENDED_BUILD_TYPE
-    EXTENDED_BUILD_TYPE := UNOFFICIAL
-    PLATFORM_VERSION_CODENAME := UNOFFICIAL
-endif 
-
-ifeq ($(EXTENDED_BUILD_TYPE), OFFICIAL)
-
-# AEXOTA
-$(call inherit-product-if-exists, vendor/aosp/config/ota.mk)
-
-endif
-
-EXTENDED_MOD_VERSION := AospExtended-$(EXTENDED_VERSION)-$(shell date -u +%Y%m%d-%H%M)-$(EXTENDED_BUILD_TYPE)
-
-PRODUCT_PROPERTY_OVERRIDES += \
-  ro.extended.version=$(EXTENDED_VERSION) \
-  ro.extended.releasetype=$(EXTENDED_BUILD_TYPE) \
-  ro.modversion=$(EXTENDED_MOD_VERSION)
-  
-EXTENDED_DISPLAY_VERSION := AospExtended-$(EXTENDED_VERSION)-$(EXTENDED_BUILD_TYPE)
-
-PRODUCT_PROPERTY_OVERRIDES += \
-  ro.extended.display.version=$(EXTENDED_DISPLAY_VERSION)
+$(call inherit-product, vendor/pa/main.mk)
 
 # Device display
 TARGET_SCREEN_HEIGHT := 1920
@@ -224,7 +10,7 @@ TARGET_SCREEN_WIDTH := 1080
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := X3
-PRODUCT_NAME := aosp_X3
+PRODUCT_NAME := pa_X3
 PRODUCT_BRAND := LeEco
 PRODUCT_MANUFACTURER := LeEco
 PRODUCT_RELEASE_NAME := X3
@@ -237,7 +23,176 @@ PRODUCT_CHARACTERISTICS := nosdcard
 PRODUCT_BUILD_PROP_OVERRIDES += \
     BUILD_FINGERPRINT=Letv/Le1s_CN/X3:6.0/DBXCNOP5902302082S/1486532099:user/release-keys 
 
+export VENDOR := pa
 
+# Include versioning information
+# Format: Major.minor.maintenance(-TAG)
+export PA_VERSION := 7.2.3-DEV
+
+export ROM_VERSION := $(PA_VERSION)-$(shell date -u +%Y%m%d)
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.modversion=$(ROM_VERSION) \
+    ro.pa.version=$(PA_VERSION)
+
+# Override undesired Google defaults
+PRODUCT_PROPERTY_OVERRIDES += \
+    keyguard.no_require_sim=true \
+    ro.com.android.dateformat=MM-dd-yyyy \
+    ro.com.android.wifi-watchlist=GoogleGuest \
+    ro.com.google.clientidbase=android-google \
+    ro.url.legal=http://www.google.com/intl/%s/mobile/android/basic/phone-legal.html \
+    ro.url.legal.android_privacy=http://www.google.com/intl/%s/mobile/android/basic/privacy.html \
+    ro.setupwizard.require_network=any \
+    ro.setupwizard.mode=OPTIONAL \
+    ro.opa.eligible_device=true
+
+# Override old AOSP default sounds with newer Google stock ones
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.config.alarm_alert=Osmium.ogg \
+    ro.config.notification_sound=Ariel.ogg \
+    ro.config.ringtone=Titania.ogg
+
+# Enable SIP+VoIP
+PRODUCT_COPY_FILES += frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml
+
+# Don't Hide APNs
+PRODUCT_PROPERTY_OVERRIDES += persist.sys.hideapn=false
+
+# Include vendor overlays
+PRODUCT_PACKAGE_OVERLAYS += vendor/pa/overlay/common
+
+# Recommend using the non debug dexpreopter
+USE_DEX2OAT_DEBUG := false
+
+# Include APN information
+PRODUCT_COPY_FILES += vendor/pa/prebuilt/etc/apns-conf.xml:system/etc/apns-conf.xml
+
+# Allow tethering without provisioning app
+PRODUCT_PROPERTY_OVERRIDES += net.tethering.noprovisioning=true
+
+# Include support for preconfigured permissions
+PRODUCT_COPY_FILES += vendor/pa/prebuilt/etc/default-permissions/pa-permissions.xml:system/etc/default-permissions/pa-permissions.xml
+
+# Copy PA specific init file
+PRODUCT_COPY_FILES += vendor/pa/prebuilt/root/init.pa.rc:root/init.pa.rc
+
+# Include explicitly to work around GMS issues
+PRODUCT_PACKAGES += libprotobuf-cpp-full
+
+# Include support for additional filesystems
+PRODUCT_PACKAGES += \
+    e2fsck \
+    mke2fs \
+    tune2fs \
+    mount.exfat \
+    fsck.exfat \
+    mkfs.exfat \
+    ntfsfix \
+    ntfs-3g
+
+# Include support for GApps backup
+PRODUCT_COPY_FILES += \
+    vendor/pa/prebuilt/install/bin/backuptool.functions:install/bin/backuptool.functions \
+    vendor/pa/prebuilt/install/bin/backuptool.sh:install/bin/backuptool.sh \
+    vendor/pa/prebuilt/addon.d/50-backuptool.sh:system/addon.d/50-backuptool.sh
+
+# Include PA GApps config
+PRODUCT_COPY_FILES += \
+    vendor/pa/prebuilt/install/gapps-config.txt:install/gapps-config.txt
+
+# Include hostapd configuration
+PRODUCT_COPY_FILES += \
+    vendor/pa/prebuilt/etc/hostapd/hostapd_default.conf:system/etc/hostapd/hostapd_default.conf \
+    vendor/pa/prebuilt/etc/hostapd/hostapd.deny:system/etc/hostapd/hostapd.deny \
+    vendor/pa/prebuilt/etc/hostapd/hostapd.accept:system/etc/hostapd/hostapd.accept
+
+# Build Chromium for Snapdragon (PA Browser)
+PRODUCT_PACKAGES += PABrowser
+
+# Build ParanoidCamera
+ifneq ($(TARGET_USES_AOSP_CAMERA),true)
+PRODUCT_PACKAGES += ParanoidCamera
+endif
+
+# Build ParanoidHub
+PRODUCT_PACKAGES += ParanoidHub
+
+# Build ParanoidPapers
+PRODUCT_PACKAGES += ParanoidPapers
+
+# Build Shuttle Paranoid Android Edition
+PRODUCT_PACKAGES += Shuttle
+
+# Build Snapdragon apps
+PRODUCT_PACKAGES += \
+    SnapdragonGallery
+
+# Build sound recorder
+PRODUCT_PACKAGES += SoundRecorder
+
+# Build WallpaperPicker
+PRODUCT_PACKAGES += WallpaperPicker
+
+# Include the custom PA bootanimation
+ifeq ($(TARGET_BOOT_ANIMATION_RES),480)
+     PRODUCT_COPY_FILES += vendor/pa/prebuilt/bootanimation/480.zip:system/media/bootanimation.zip
+endif
+ifeq ($(TARGET_BOOT_ANIMATION_RES),720)
+     PRODUCT_COPY_FILES += vendor/pa/prebuilt/bootanimation/720.zip:system/media/bootanimation.zip
+endif
+ifeq ($(TARGET_BOOT_ANIMATION_RES),1080)
+     PRODUCT_COPY_FILES += vendor/pa/prebuilt/bootanimation/1080.zip:system/media/bootanimation.zip
+endif
+ifeq ($(TARGET_BOOT_ANIMATION_RES),1440)
+     PRODUCT_COPY_FILES += vendor/pa/prebuilt/bootanimation/1440.zip:system/media/bootanimation.zip
+endif
+ifeq ($(TARGET_BOOT_ANIMATION_RES),2160)
+     PRODUCT_COPY_FILES += vendor/pa/prebuilt/bootanimation/2160.zip:system/media/bootanimation.zip
+endif
+
+# Clear security patch level
+PLATFORM_SECURITY_PATCH :=
+
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.build.selinux=1
+
+ifeq ($(TARGET_BUILD_VARIANT),user)
+ADDITIONAL_DEFAULT_PROPERTIES += ro.adb.secure=1
+else
+ADDITIONAL_DEFAULT_PROPERTIES += ro.adb.secure=0
+endif
+
+# AOSPA services
+PRODUCT_PACKAGES += pa-services
+PRODUCT_PACKAGES += co.aospa.power.ShutdownAOSPA.xml
+PRODUCT_BOOT_JARS += pa-services
+
+# TCP Connection Management
+PRODUCT_PACKAGES += tcmiface
+PRODUCT_BOOT_JARS += tcmiface
+
+# RCS Service
+PRODUCT_PACKAGES += \
+    rcscommon \
+    rcscommon.xml \
+    rcsservice \
+    rcs_service_aidl \
+    rcs_service_aidl.xml \
+    rcs_service_aidl_static \
+    rcs_service_api \
+    rcs_service_api.xml
+
+# Bluetooth Audio (A2DP)
+PRODUCT_PACKAGES += libbthost_if
+
+# Substratum
+PRODUCT_PACKAGES += ThemeInterfacer
+
+# Include vendor SEPolicy changes
+include vendor/pa/sepolicy/sepolicy.mk
+
+# Include proprietary header flags if vendor/head exists
+-include vendor/head/head-capabilities.mk
 
 
 
