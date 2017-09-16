@@ -1,3 +1,3 @@
 PRODUCT_MAKEFILES := \
-   $(LOCAL_DIR)/aosp_X3.mk
+   $(LOCAL_DIR)/pa_X3.mk
 	
